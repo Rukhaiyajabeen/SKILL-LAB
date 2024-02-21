@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct Node {
+ int data;
+ int priority;
+ struct Node *next;
+} Node;
+Node* createNode(int data, int priority) {
+ Node *newNode = (Node*)malloc(sizeof(Node));
+ newNode->data = data;
+ newNode->priority = priority;
+ newNode->next = NULL;
+ return newNode;
+}
+void enqueue(Node **head, int data, int priority) {
+ Node *newNode = createNode(data, priority);
+ if (*head == NULL || priority < (*head)->priority) {
+newNode->next = *head;
+ *head = newNode;
+ } else {
+ Node *temp = *head;
+ while (temp->next != NULL && temp->next->priority <= priority) {
+ temp = temp->next;
+ }
+ newNode->next = temp->next;
+ temp->next = newNode;
+ }
+}
+int dequeue(Node **head) {
+ if (*head == NULL) {
+ printf("Priority queue is empty!\n");
+ return -1;
+ }
+ int data = (*head)->data;
+ Node *temp = *head;
+ *head = (*head)->next;
+ free(temp);
+ return data;
+}
+void printPriorityQueue(Node *head) {
+ while (head != NULL) {
+ printf("(%d, %d) ", head->data, head->priority);
+ head = head->next;
+ }
+ printf("\n");
+}
+int main() {
+ Node *priorityQueue = NULL;
+ enqueue(&priorityQueue, 3, 1);
+ enqueue(&priorityQueue, 6, 2);
+ enqueue(&priorityQueue, 9, 3);
+ enqueue(&priorityQueue, 1, 2);
+ printf("Priority Queue: ");
+ printPriorityQueue(priorityQueue);
+ printf("Dequeued element: %d\n", dequeue(&priorityQueue));
+ printf("Priority Queue after dequeue: ");
+ printPriorityQueue(priorityQueue);
+ return 0;
+}
